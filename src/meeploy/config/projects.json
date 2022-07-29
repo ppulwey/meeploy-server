@@ -1,0 +1,20 @@
+[
+  {
+    "webhookSecret": "",
+    "repositoryName": "opttocut-backend",
+    "projectName": "opt2cut",
+    "receipt": "nodejs",
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": "3001",
+      "MONGODB_URL": "mongodb://localhost:27017/test",
+      "JWT_SECRET": "abAD*+neunneundreiAffe!",
+      "JWT_ISSUER": "opt2cut.cloubucket.de",
+      "JWT_ALG": "HS256",
+      "JWT_EXPIRATION": "2h"
+    },
+
+    "installCommand": "yarn",
+    "startScriptPath": "dist/index.js"
+  }
+]

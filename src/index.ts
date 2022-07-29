@@ -1,23 +1,17 @@
 import express, { NextFunction, Request, Router, Response } from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
-import fs from 'fs/promises';
+import fsPromise from 'fs/promises';
+import fs from 'fs';
 import Logger from './utils/logger';
 import download from './utils/download';
 import path from 'path';
 import { folderSetup } from './utils/setup';
 import { Octokit } from 'octokit';
 import { unzip } from './utils/zip';
-import { OcotokitRepoList, ProjectConfig } from './models';
+import { Config, OcotokitRepoList, ProjectConfig } from './models';
 import { executeShellCommand } from './utils/jsshell';
 import { WorkflowRun } from './models/WorkflowRun';
 import pm2 from 'pm2';
-
-dotenv.config();
-
-const DOWNLOAD_PATH = path.join(__dirname, process.env.DOWNLOAD_PATH);
-const RUN_PATH = path.join(__dirname, process.env.RUN_PATH);
-const PROJECTS_PATH = path.join(__dirname, process.env.PROJECTS_PATH);
 
 const app = express();
 const port = process.env.PORT;
@@ -26,9 +20,18 @@ const router = Router();
 app.use(cors());
 app.use(express.json());
 
+const configContent = fs.readFileSync('./config/config.json', 'utf-8');
+const config = JSON.parse(configContent) as Config;
+
+const DOWNLOAD_PATH = path.join(__dirname, config.downloadPath);
+const RUN_PATH = path.join(__dirname, config.runPath);
+const PROJECTS_PATH = path.join(__dirname, config.projectsPath);
+
 async function init() {
+  // * Read config file
+
   const octokit = new Octokit({
-    auth: process.env.GITHUB_TOKEN,
+    auth: config.githubToken,
   });
 
   try {
@@ -50,7 +53,7 @@ async function init() {
       // * Find project setting in config file
       let projectsConfig: ProjectConfig[] = [];
       try {
-        const projectsFile = await fs.readFile(PROJECTS_PATH, {
+        const projectsFile = await fsPromise.readFile(PROJECTS_PATH, {
           encoding: 'utf-8',
         });
         projectsConfig = JSON.parse(projectsFile) as ProjectConfig[];
@@ -111,17 +114,17 @@ async function init() {
       }
 
       // * 3. Copy from download folder to run folder
-      await fs.cp(downloadFullPath, runFullPath);
+      await fsPromise.cp(downloadFullPath, runFullPath);
 
       // * 2. Unzip the build artifact
       const rootFolderPath = path.join(RUN_PATH, repository.name);
       try {
-        await fs.stat(rootFolderPath);
-        await fs.rm(rootFolderPath, { force: true, recursive: true });
+        await fsPromise.stat(rootFolderPath);
+        await fsPromise.rm(rootFolderPath, { force: true, recursive: true });
       } catch (error) {
         Logger.info(`Root folder not found -> creating , ${rootFolderPath}`);
       }
-      await fs.mkdir(rootFolderPath);
+      await fsPromise.mkdir(rootFolderPath);
       await unzip(runFullPath, rootFolderPath);
 
       // * 4. Install dependencies

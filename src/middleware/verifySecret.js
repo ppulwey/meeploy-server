@@ -7,7 +7,7 @@ import fs from 'fs/promises';
 // * Read Github config
 const { webhook_secret, webhook_header_name, webhook_hash_alg } = config;
 
-function verifyPostData(req: Request, res: Response, next: NextFunction) {
+function verifyPostData(req, res, next) {
   if (!req.rawBody) {
     return next('Request body empty');
   }

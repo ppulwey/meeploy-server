@@ -33,4 +33,12 @@ type ProjectConfig = {
   startScriptPath: string;
 };
 
-export { OcotokitRepoList, ProjectConfig };
+type Config = {
+  port: number;
+  downloadPath: string;
+  runPath: string;
+  projectsPath: string;
+  githubToken: string;
+};
+
+export { OcotokitRepoList, ProjectConfig, Config };

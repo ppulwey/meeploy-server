@@ -20,7 +20,7 @@ const router = Router();
 app.use(cors());
 app.use(express.json());
 
-const configContent = fs.readFileSync('./config/config.json', 'utf-8');
+const configContent = fs.readFileSync('../config/config.json', 'utf-8');
 const config = JSON.parse(configContent) as Config;
 
 const DOWNLOAD_PATH = path.join(__dirname, config.downloadPath);

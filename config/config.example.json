@@ -1,0 +1,7 @@
+{
+  "port": 3999,
+  "downloadPath": "/repos/download",
+  "runPath": "/repos/run",
+  "projectsPath": "/config/projects.json",
+  "githubToken": "ghp_my_token"
+}

@@ -1,17 +1,18 @@
-import express, { NextFunction, Request, Router, Response } from 'express';
 import cors from 'cors';
-import fsPromise from 'fs/promises';
+import express, { NextFunction, Request, Response, Router } from 'express';
 import fs from 'fs';
-import Logger from './utils/logger';
-import download from './utils/download';
-import path from 'path';
-import { folderSetup } from './utils/setup';
+import fsPromise from 'fs/promises';
+import * as os from 'node:os';
 import { Octokit } from 'octokit';
-import { unzip } from './utils/zip';
-import { Config, OcotokitRepoList, ProjectConfig } from './models';
-import { executeShellCommand } from './utils/jsshell';
-import { WorkflowRun } from './models/WorkflowRun';
+import path from 'path';
 import pm2 from 'pm2';
+import { Config, OcotokitRepoList, ProjectConfig } from './models';
+import { WorkflowRun } from './models/WorkflowRun';
+import download from './utils/download';
+import { executeShellCommand } from './utils/jsshell';
+import Logger from './utils/logger';
+import { folderSetup } from './utils/setup';
+import { unzip } from './utils/zip';
 
 const app = express();
 const port = process.env.PORT;
@@ -20,7 +21,15 @@ const router = Router();
 app.use(cors());
 app.use(express.json());
 
-const configContent = fs.readFileSync('./config/config.json', 'utf-8');
+const configPath = path.join(
+  os.homedir(),
+  'meeploy',
+  'server',
+  'run',
+  'config',
+  'config.json'
+);
+const configContent = fs.readFileSync(configPath, 'utf-8');
 const config = JSON.parse(configContent) as Config;
 
 const DOWNLOAD_PATH = path.join(__dirname, config.downloadPath);

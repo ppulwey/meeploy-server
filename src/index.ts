@@ -15,7 +15,6 @@ import { folderSetup } from './utils/setup';
 import { unzip } from './utils/zip';
 
 const app = express();
-const port = process.env.PORT;
 const router = Router();
 
 app.use(cors());
@@ -185,8 +184,8 @@ async function init() {
 
   app.use('/api/v1', router);
 
-  app.listen(port, () => {
-    console.log(`⚡️ Server listening on port ${port}`);
+  app.listen(config.port, () => {
+    console.log(`⚡️ Server listening on port ${config.port}`);
   });
 }
 

@@ -1,5 +1,5 @@
 node_modules
 dist
 .env
-config/config.json
+src/config/config.json
 */**/.DS_Store

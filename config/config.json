@@ -1,7 +1,0 @@
-{
-  "port": 3999,
-  "downloadPath": "/meeploy/repos/download",
-  "runPath": "/meeploy/repos/run",
-  "projectsPath": "/meeploy/config/projects.json",
-  "githubToken": "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"
-}

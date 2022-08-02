@@ -36,7 +36,10 @@ function runProject(project: ProjectConfig, rootFolderPath: string) {
               Logger.error(`Error starting ${project.projectName}`, err);
               reject();
             } else {
-              Logger.success(`${project.projectName} successfully started`);
+              Logger.success(
+                `${project.projectName} successfully started with env vars`,
+                JSON.stringify(project.env, null, 2)
+              );
               resolve();
             }
             pm2.disconnect();

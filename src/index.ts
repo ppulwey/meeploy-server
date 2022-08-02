@@ -56,7 +56,14 @@ async function init() {
       res: Response,
       next: NextFunction
     ) => {
-      const { repository } = req.body;
+      const { repository, action } = req.body;
+
+      Logger.info(`Got request with action ${action}`);
+
+      // * Only trigger when workflow is in state 'completed'
+      if (action === 'requested') {
+        return;
+      }
 
       // * Find project setting in config file
       let projectsConfig: ProjectConfig[] = [];

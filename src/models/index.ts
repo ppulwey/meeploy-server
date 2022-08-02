@@ -25,7 +25,6 @@ type ProjectConfig = {
   webhookSecret: string;
   repositoryName: string;
   projectName: string;
-  receipt: 'nodejs' | 'react';
   env: {
     [key: string]: string;
   };

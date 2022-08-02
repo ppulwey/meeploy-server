@@ -5,9 +5,9 @@ import fsPromise from 'fs/promises';
 import * as os from 'node:os';
 import { Octokit } from 'octokit';
 import path from 'path';
-import pm2 from 'pm2';
 import { Config, OcotokitRepoList, ProjectConfig } from './models';
 import { WorkflowRun } from './models/WorkflowRun';
+import { runProject } from './runProject';
 import download from './utils/download';
 import { executeShellCommand } from './utils/jsshell';
 import Logger from './utils/logger';
@@ -31,9 +31,9 @@ const configPath = path.join(
 const configContent = fs.readFileSync(configPath, 'utf-8');
 const config = JSON.parse(configContent) as Config;
 
-const DOWNLOAD_PATH = path.join(__dirname, config.downloadPath);
-const RUN_PATH = path.join(__dirname, config.runPath);
-const PROJECTS_PATH = path.join(__dirname, config.projectsPath);
+const DOWNLOAD_PATH = path.join(os.homedir(), config.downloadPath);
+const RUN_PATH = path.join(os.homedir(), config.runPath);
+const PROJECTS_PATH = path.join(os.homedir(), config.projectsPath);
 
 async function init() {
   // * Read config file
@@ -70,7 +70,7 @@ async function init() {
           throw Error();
         }
       } catch (error) {
-        Logger.error('Projects file not found or corrupt');
+        Logger.error(`Projects file not found or corrupt (${PROJECTS_PATH})`);
         res.status(500).send('Projects file not found or corrupt');
         return;
       }
@@ -138,51 +138,19 @@ async function init() {
       // * 4. Install dependencies
       await executeShellCommand(rootFolderPath, project.installCommand, []);
 
-      pm2.connect((err) => {
-        if (err) {
-          const errMsg = 'Cannot connect to pm2 deamon';
-          Logger.error(errMsg, err);
-          res.status(500).send(errMsg);
-          return;
-        }
-
-        // * Stop running project
-        pm2.stop(project.projectName, (err) => {
-          if (err) {
-            Logger.error(`Error stopping ${project.projectName}`, err);
-          } else {
-            Logger.success(`${project.projectName} successfully stopped`);
-          }
-        });
-
-        // * 5. Running project
-        const startScriptFullPath = path.join(
-          rootFolderPath,
-          project.startScriptPath
-        );
-        pm2.start(
-          {
-            name: project.projectName,
-            script: startScriptFullPath,
-            env: project.env,
-          },
-          (err) => {
-            if (err) {
-              Logger.error(`Error starting ${project.projectName}`, err);
-            } else {
-              Logger.success(`${project.projectName} successfully started`);
-            }
-          }
-        );
-
-        pm2.disconnect();
-      });
+      // * 5. Run project
+      try {
+        await runProject(project, rootFolderPath);
+      } catch (error) {
+        Logger.error(error);
+        res.status(500).send('Error starting project');
+      }
 
       res.send();
     }
   );
 
-  app.use('/api/v1', router);
+  app.use('/', router);
 
   app.listen(config.port, () => {
     console.log(`⚡️ Server listening on port ${config.port}`);

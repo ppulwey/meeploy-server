@@ -7,5 +7,5 @@ sudo apt update
 sudo apt-get install -y mongodb-org
 sudo systemctl enable mongod
 sudo systemctl start mongod
-echo "Please wait 10 seconds ..."
+echo "Finishing ..."
 sudo sleep 10

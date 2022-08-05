@@ -25,5 +25,6 @@ jobs:
           path: |
             dist
             scripts
+            database
             package.json
             yarn.lock

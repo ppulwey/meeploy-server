@@ -24,5 +24,6 @@ jobs:
           name: meeploy-server
           path: |
             dist
+            scripts
             package.json
             yarn.lock

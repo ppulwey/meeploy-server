@@ -36,10 +36,8 @@ const RUN_PATH = path.join(os.homedir(), config.runPath);
 const ECOSYSTEM_PATH = path.join(os.homedir(), config.ecosystemFilePath);
 
 async function init() {
-  // * Read config file
-
   const octokit = new Octokit({
-    auth: process.env.GITHUB_TOKEN,
+    auth: process.env.GITHUB_PRIVATE_TOKEN,
   });
 
   try {

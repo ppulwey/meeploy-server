@@ -11,6 +11,7 @@ import { runProject } from './runProject';
 import download from './utils/download';
 import { executeShellCommand } from './utils/jsshell';
 import Logger from './utils/logger';
+import { startPm2App } from './utils/pm2';
 import { folderSetup } from './utils/setup';
 import { unzip } from './utils/zip';
 
@@ -33,13 +34,13 @@ const config = JSON.parse(configContent) as Config;
 
 const DOWNLOAD_PATH = path.join(os.homedir(), config.downloadPath);
 const RUN_PATH = path.join(os.homedir(), config.runPath);
-const PROJECTS_PATH = path.join(os.homedir(), config.projectsPath);
+const ECOSYSTEM_PATH = path.join(os.homedir(), config.ecosystemFilePath);
 
 async function init() {
   // * Read config file
 
   const octokit = new Octokit({
-    auth: config.githubToken,
+    auth: process.env.GITHUB_TOKEN,
   });
 
   try {
@@ -66,24 +67,24 @@ async function init() {
       }
 
       // * Find project setting in config file
-      let projectsConfig: ProjectConfig[] = [];
+      let projectsConfig: ProjectConfig;
       try {
-        const projectsFile = await fsPromise.readFile(PROJECTS_PATH, {
+        const projectsFile = await fsPromise.readFile(ECOSYSTEM_PATH, {
           encoding: 'utf-8',
         });
-        projectsConfig = JSON.parse(projectsFile) as ProjectConfig[];
+        projectsConfig = JSON.parse(projectsFile) as ProjectConfig;
 
-        if (projectsConfig.length === 0) {
-          throw Error();
+        if (projectsConfig.apps.length === 0) {
+          throw new Error();
         }
       } catch (error) {
-        Logger.error(`Projects file not found or corrupt (${PROJECTS_PATH})`);
+        Logger.error(`Projects file not found or corrupt (${ECOSYSTEM_PATH})`);
         res.status(500).send('Projects file not found or corrupt');
         return;
       }
 
-      const project = projectsConfig.find(
-        (x) => x.repositoryName === repository.name
+      const project = projectsConfig.apps.find(
+        (x) => x.name === repository.name
       );
 
       if (project === undefined) {
@@ -143,11 +144,11 @@ async function init() {
       await unzip(runFullPath, rootFolderPath);
 
       // * 4. Install dependencies
-      await executeShellCommand(rootFolderPath, project.installCommand, []);
+      await executeShellCommand(rootFolderPath, 'yarn', ['install']);
 
       // * 5. Run project
       try {
-        await runProject(project, rootFolderPath);
+        await startPm2App(repository.name);
       } catch (error) {
         Logger.error(error);
         res.status(500).send('Error starting project');
@@ -166,4 +167,4 @@ async function init() {
 
 init();
 
-export { RUN_PATH, DOWNLOAD_PATH };
+export { RUN_PATH, DOWNLOAD_PATH, ECOSYSTEM_PATH };

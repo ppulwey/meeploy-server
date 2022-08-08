@@ -7,7 +7,7 @@ declare global {
       DOWNLOAD_PATH: string;
       RUN_PATH: string;
       PROJECTS_PATH: string;
-      GITHUB_TOKEN: string;
+      GITHUB_PRIVATE_TOKEN: string;
     }
   }
 }

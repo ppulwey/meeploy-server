@@ -1,3 +1,5 @@
+import { StartOptions } from 'pm2';
+
 type OcotokitRepoList = {
   total_count: number;
   artifacts: {
@@ -22,22 +24,18 @@ type OcotokitRepoList = {
 };
 
 type ProjectConfig = {
-  webhookSecret: string;
-  repositoryName: string;
-  projectName: string;
-  env: {
-    [key: string]: string;
-  };
-  installCommand: string;
-  startScriptPath: string;
+  apps: StartOptions[];
 };
 
 type Config = {
   port: number;
   downloadPath: string;
+  meeployServerRunPath: string;
   runPath: string;
-  projectsPath: string;
-  githubToken: string;
+  databaseConfigPath: string;
+  scriptPath: string;
+  ecosystemFilePath: string;
+  githubPublicToken: string;
 };
 
 export { OcotokitRepoList, ProjectConfig, Config };

@@ -7,7 +7,6 @@ import { Octokit } from 'octokit';
 import path from 'path';
 import { Config, OcotokitRepoList, ProjectConfig } from './models';
 import { WorkflowRun } from './models/WorkflowRun';
-import { runProject } from './runProject';
 import download from './utils/download';
 import { executeShellCommand } from './utils/jsshell';
 import Logger from './utils/logger';

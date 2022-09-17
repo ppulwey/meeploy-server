@@ -56,6 +56,9 @@ async function init() {
     ) => {
       const { repository, action } = req.body;
 
+      // * Webhook received - immediately send OK response
+      res.sendStatus(200);
+
       Logger.info(`Got request with action ${action}`);
 
       // * Only trigger when workflow is in state 'completed'
@@ -76,7 +79,6 @@ async function init() {
         }
       } catch (error) {
         Logger.error(`Projects file not found or corrupt (${ECOSYSTEM_PATH})`);
-        res.status(500).send('Projects file not found or corrupt');
         return;
       }
 
@@ -85,7 +87,7 @@ async function init() {
       );
 
       if (project === undefined) {
-        res.status(500).send('Project not in projects file');
+        Logger.error('Project not in projects file');
         return;
       }
 
@@ -102,7 +104,7 @@ async function init() {
       });
 
       if (listArtifactsResult.data.total_count === 0) {
-        res.status(404).send(`No artifacts for repo ${repository.name}`);
+        Logger.error(`No artifacts for repo ${repository.name}`);
       }
 
       const latestArtifact = listArtifactsResult.data.artifacts.sort(
@@ -116,14 +118,14 @@ async function init() {
       });
 
       if (octoResponse.status !== 200) {
-        res.sendStatus(octoResponse.status).send('Error from Octo');
+        Logger.error('Error from Octo', octoResponse.status);
         return;
       }
 
       try {
         await download(octoResponse.url, downloadFullPath);
       } catch (error) {
-        res.sendStatus(500);
+        Logger.error(`Error downloading artifacts`, error);
       }
 
       // * 3. Copy from download folder to run folder
@@ -147,11 +149,8 @@ async function init() {
       try {
         await startPm2App(repository.name);
       } catch (error) {
-        Logger.error(error);
-        res.status(500).send('Error starting project');
+        Logger.error(`Error starting project`, error);
       }
-
-      res.send();
     }
   );
 

@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { spawn } from 'child_process';
 
 import * as path from 'path';
@@ -16,7 +17,7 @@ function executeShellScript(
   commands: string[],
   onData?: (data: Buffer) => void,
   onError?: (err: Error) => void,
-  onClose?: (code: number | null) => void,
+  onClose?: (code: number | null) => void
 ) {
   console.log(`Executing script in ${executeFolder}`);
 
@@ -56,9 +57,9 @@ function executeShellCommand(
   params: string[],
   onData?: (data: Buffer) => void,
   onError?: (err: Error) => void,
-  onClose?: (code: number | null) => void,
+  onClose?: (code: number | null) => void
 ) {
-  console.log(`Executing command in ${executeFolder}`);
+  console.log(`Executing command ${chalk.bgGrey(command)} in ${executeFolder}`);
 
   return new Promise<void>((resolve, reject) => {
     const cmd = spawn(command, params, {

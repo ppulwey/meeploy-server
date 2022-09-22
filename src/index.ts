@@ -10,7 +10,7 @@ import { WorkflowRun } from './models/WorkflowRun';
 import download from './utils/download';
 import { executeShellCommand } from './utils/jsshell';
 import Logger from './utils/logger';
-import { startPm2App } from './utils/pm2';
+import { startPm2App, syncPm2StartupScripts } from './utils/pm2';
 import { folderSetup } from './utils/setup';
 import { unzip } from './utils/zip';
 
@@ -151,6 +151,8 @@ async function init() {
       } catch (error) {
         Logger.error(`Error starting project`, error);
       }
+
+      await syncPm2StartupScripts();
     }
   );
 

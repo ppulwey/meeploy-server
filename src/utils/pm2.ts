@@ -1,6 +1,6 @@
-import * as pm2 from 'pm2';
 import { ECOSYSTEM_PATH } from '../index';
 import { executeShellCommand } from './jsshell';
+import * as pm2 from 'pm2';
 
 async function startPm2App(appName: string) {
   await executeShellCommand('/', 'pm2', [
@@ -38,4 +38,24 @@ async function deletePm2App(appName: string) {
   ]);
 }
 
-export { startPm2App, stopPm2App, restartPm2App, deletePm2App };
+async function syncPm2StartupScripts(): Promise<void> {
+  console.log('Syncing startup script');
+
+  return new Promise<void>((resolve, reject) => {
+    pm2.startup('systemd', (err) => {
+      if (err) {
+        reject(new Error('Error creating startup script'));
+      }
+
+      resolve();
+    });
+  });
+}
+
+export {
+  startPm2App,
+  stopPm2App,
+  restartPm2App,
+  deletePm2App,
+  syncPm2StartupScripts,
+};

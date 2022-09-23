@@ -41,15 +41,16 @@ async function deletePm2App(appName: string) {
 async function syncPm2StartupScripts(): Promise<void> {
   console.log('Syncing startup script');
 
-  return new Promise<void>((resolve, reject) => {
-    pm2.startup('systemd', (err) => {
-      if (err) {
-        reject(new Error('Error creating startup script'));
-      }
-
-      resolve();
-    });
-  });
+  console.log('Persisting startup script');
+  await executeShellCommand(
+    '/',
+    'pm2',
+    ['save'],
+    (data) => console.log(data.toString()),
+    (err) => {
+      throw err;
+    }
+  );
 }
 
 export {

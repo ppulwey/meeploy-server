@@ -62,7 +62,7 @@ async function init() {
       Logger.info(`Got request with action ${action}`);
 
       // * Only trigger when workflow is in state 'completed'
-      if (action === 'requested') {
+      if (action === undefined || action === 'requested') {
         return;
       }
 

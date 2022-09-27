@@ -1,5 +1,5 @@
 export interface WorkflowRun {
-  action: 'requested' | 'completed';
+  action?: 'requested' | 'completed';
   organization: Organization;
   repository: WorkflowRunRepository;
   sender: Sender;

@@ -150,10 +150,14 @@ async function init() {
           // ? Set this to install .venv in project folder
           await executeShellCommand(
             rootFolderPath,
-            'export',
-            ['PIPENV_VENV_IN_PROJECT=1', 'pipenv', 'install'],
+            'pipenv',
+            ['install'],
             (data) => console.log(data.toString()),
-            (error) => console.error(error)
+            (error) => console.error(error),
+            undefined,
+            {
+              PIPENV_VENV_IN_PROJECT: 1,
+            }
           );
         } else {
           console.log('Found node project');

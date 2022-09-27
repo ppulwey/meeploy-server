@@ -10,7 +10,7 @@ import { WorkflowRun } from './models/WorkflowRun';
 import download from './utils/download';
 import { executeShellCommand } from './utils/jsshell';
 import Logger from './utils/logger';
-import { startPm2App, syncPm2StartupScripts } from './utils/pm2';
+import { startPm2App, stopPm2App, syncPm2StartupScripts } from './utils/pm2';
 import { folderSetup } from './utils/setup';
 import { unzip } from './utils/zip';
 
@@ -161,7 +161,14 @@ async function init() {
         return;
       }
 
-      // * 5. Run project
+      // * 5. Stop project
+      try {
+        await stopPm2App(repository.name);
+      } catch (error) {
+        Logger.error(`Error stopping project`, error);
+      }
+
+      // * 6. Run project
       try {
         await startPm2App(repository.name);
       } catch (error) {

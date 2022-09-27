@@ -39,8 +39,6 @@ async function deletePm2App(appName: string) {
 }
 
 async function syncPm2StartupScripts(): Promise<void> {
-  console.log('Syncing startup script');
-
   console.log('Persisting startup script');
   await executeShellCommand(
     '/',

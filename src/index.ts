@@ -143,7 +143,17 @@ async function init() {
       await unzip(runFullPath, rootFolderPath);
 
       // * 4. Install dependencies
-      await executeShellCommand(rootFolderPath, 'yarn', ['install']);
+
+      if (project.interpreter !== undefined) {
+        if (project.interpreter.includes('python')) {
+          await executeShellCommand(rootFolderPath, 'pipenv', ['install']);
+        } else {
+          await executeShellCommand(rootFolderPath, 'yarn', ['install']);
+        }
+      } else {
+        console.error('No valid interpreter found in ecosystem file');
+        return;
+      }
 
       // * 5. Run project
       try {

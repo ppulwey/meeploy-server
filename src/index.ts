@@ -146,7 +146,13 @@ async function init() {
 
       if (project.interpreter !== undefined) {
         if (project.interpreter.includes('python')) {
-          await executeShellCommand(rootFolderPath, 'pipenv', ['install']);
+          await executeShellCommand(
+            rootFolderPath,
+            'pipenv',
+            ['install'],
+            (data) => console.log(data.toString()),
+            (error) => console.error(error)
+          );
         } else {
           await executeShellCommand(rootFolderPath, 'yarn', ['install']);
         }

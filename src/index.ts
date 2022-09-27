@@ -146,6 +146,7 @@ async function init() {
 
       if (project.interpreter !== undefined) {
         if (project.interpreter.includes('python')) {
+          console.log('Found python project');
           // ? Set this to install .venv in project folder
           await executeShellCommand(
             rootFolderPath,
@@ -155,6 +156,7 @@ async function init() {
             (error) => console.error(error)
           );
         } else {
+          console.log('Found node project');
           await executeShellCommand(rootFolderPath, 'yarn', ['install']);
         }
       } else {

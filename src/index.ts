@@ -146,6 +146,14 @@ async function init() {
 
       if (project.interpreter !== undefined) {
         if (project.interpreter.includes('python')) {
+          // ? Set this to install .venv in project folder
+          await executeShellCommand(
+            '/',
+            'export',
+            ['PIPENV_VENV_IN_PROJECT=1'],
+            (data) => console.log(data.toString()),
+            (error) => console.error(error)
+          );
           await executeShellCommand(
             rootFolderPath,
             'pipenv',

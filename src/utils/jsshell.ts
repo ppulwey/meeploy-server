@@ -58,7 +58,7 @@ function executeShellCommand(
   onData?: (data: Buffer) => void,
   onError?: (err: Error) => void,
   onClose?: (code: number | null) => void,
-  env?: any
+  env?: { [key: string]: string }
 ) {
   console.log(`Executing command ${chalk.bgGrey(command)} in ${executeFolder}`);
 
@@ -67,7 +67,10 @@ function executeShellCommand(
       cwd: path.resolve(executeFolder),
       stdio: 'pipe',
       shell: true,
-      env,
+      env: {
+        ...process.env,
+        ...env,
+      },
     });
 
     cmd.stdout.setEncoding('utf8');

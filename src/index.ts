@@ -154,9 +154,9 @@ async function init() {
             ['install'],
             (data) => console.log(data.toString()),
             (error) => console.error(error),
-            undefined,
+            (code) => console.log(`Process ended with code ${code}`),
             {
-              PIPENV_VENV_IN_PROJECT: 1,
+              PIPENV_VENV_IN_PROJECT: '1',
             }
           );
         } else {

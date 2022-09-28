@@ -148,17 +148,9 @@ async function init() {
         if (project.interpreter.includes('python')) {
           console.log('Found python project');
           // ? Set this to install .venv in project folder
-          await executeShellCommand(
-            rootFolderPath,
-            'pipenv',
-            ['install'],
-            (data) => console.log(data.toString()),
-            (error) => console.error(error),
-            (code) => console.log(`Process ended with code ${code}`),
-            {
-              PIPENV_VENV_IN_PROJECT: '1',
-            }
-          );
+          await executeShellCommand(rootFolderPath, 'pipenv', ['install'], {
+            PIPENV_VENV_IN_PROJECT: '1',
+          });
         } else {
           console.log('Found node project');
           await executeShellCommand(rootFolderPath, 'yarn', ['install']);

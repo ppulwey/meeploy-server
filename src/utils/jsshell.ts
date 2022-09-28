@@ -55,10 +55,10 @@ function executeShellCommand(
   executeFolder: string,
   command: string,
   params: string[],
+  env?: { [key: string]: string },
   onData?: (data: Buffer) => void,
   onError?: (err: Error) => void,
-  onClose?: (code: number | null) => void,
-  env?: { [key: string]: string }
+  onClose?: (code: number | null) => void
 ) {
   console.log(`Executing command ${chalk.bgGrey(command)} in ${executeFolder}`);
 
@@ -79,17 +79,23 @@ function executeShellCommand(
     cmd.stdout.on('data', (data: Buffer) => {
       if (onData !== undefined) {
         onData(data);
+      } else {
+        console.log(data.toString());
       }
     });
     cmd.stderr.on('error', (err) => {
       if (onError !== undefined) {
         onError(err);
+      } else {
+        console.error(err);
       }
       reject();
     });
     cmd.on('close', (code) => {
       if (onClose !== undefined) {
         onClose(code);
+      } else {
+        console.log(`Process ended with code ${code}`);
       }
       resolve();
     });

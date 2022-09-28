@@ -144,7 +144,7 @@ async function init() {
 
       // * 4. Install dependencies
 
-      if (project.interpreter !== undefined) {
+      if (project.interpreter !== undefined) { // * Defaults to node
         if (project.interpreter.includes('python')) {
           console.log('Found python project');
           // ? Set this to install .venv in project folder
@@ -155,9 +155,6 @@ async function init() {
           console.log('Found node project');
           await executeShellCommand(rootFolderPath, 'yarn', ['install']);
         }
-      } else {
-        console.error('No valid interpreter found in ecosystem file');
-        return;
       }
 
       // * 5. Stop project
